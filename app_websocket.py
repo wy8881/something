@@ -11,7 +11,7 @@ import torch
 
 # Initialize Flask app
 app = Flask(__name__)
-socketio = SocketIO(host='0.0.0.0',debug=True,cors_allowed_origins='*')
+socketio = SocketIO(app,debug=True,cors_allowed_origins='*')
 
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -182,4 +182,4 @@ def process_image(image, houseId):
 
 
 if __name__ == '__main__':
-   socketio.run(host='0.0.0.0', port=5000)
+   socketio.run(app, host='0.0.0.0', port=5000, debug=True)
