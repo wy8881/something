@@ -38,6 +38,7 @@ def setModel():
             print("Ready to download....")
             modelName = f"{CLASSIFIER_FOLDER}/{houseId}.yml"
             with open(modelName, 'wb') as file:
+                print(file)
                 for chunk in response.iter_content(chunk_size=100 * 1024 * 1024): 
                     file.write(chunk)
                     return jsonify({'state': "sucess"})
