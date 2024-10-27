@@ -32,14 +32,12 @@ def setModel():
     try:
         houseId = request.form.get('houseId')
         url = request.form.get('modelUrl')
-        print(houseId, url)
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             print("Ready to download....")
             modelName = f"{CLASSIFIER_FOLDER}/{houseId}.yml"
             with open(modelName, 'wb') as file:
-                print(file)
-                for chunk in response.iter_content(chunk_size=100 * 1024 * 1024): 
+                for chunk in response.iter_content(chunk_size=20* 1024 * 1024): 
                     file.write(chunk)
                     return jsonify({'state': "sucess"})
 
