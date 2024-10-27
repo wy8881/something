@@ -32,6 +32,7 @@ def setModel():
     try:
         houseId = request.form.get('houseId')
         url = request.form.get('modelUrl')
+        print(houseId, url)
         response = requests.get(url, stream=True)
         if response.status_code == 200:
             modelName = f"{CLASSIFIER_FOLDER}/{houseId}.yml"
