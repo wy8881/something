@@ -52,7 +52,7 @@ def setModel():
 def checkAlive():
     return jsonify({'state': "sucess"}),200
 
-@socketio.on('send_frame')
+@socketio.on('send_frame', namespace='/object_detection')
 def handle_frame(data):
     try:
         # Decode the received image from bytes
