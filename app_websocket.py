@@ -39,7 +39,6 @@ def setModel():
             with open(modelName, 'wb') as file:
                 for chunk in response.iter_content(chunk_size=20* 1024 * 1024): 
                     file.write(chunk)
-                    return jsonify({'state': "sucess"})
 
         return jsonify({'state': "failure"}), 400
     except Exception as e:
@@ -52,7 +51,7 @@ def setModel():
 def checkAlive():
     return jsonify({'state': "sucess"}),200
 
-@socketio.on('send_frame', namespace='/object_detection')
+@socketio.on('send_frame', namespace="/detect")
 def handle_frame(data):
     try:
         # Decode the received image from bytes
