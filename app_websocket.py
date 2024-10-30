@@ -53,21 +53,6 @@ def setModel():
 def checkAlive():
     return jsonify({'state': "sucess"}),200
 
-@socketio.on('send_frame', namespace="/detect")
-def handle_frame(data):
-    try:
-        # Decode the received image from bytes
-        image_bytes = np.frombuffer(data['frame'], dtype=np.uint8)
-        image = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
-
-        houseId = data['houseId']
-        timeStamp = data['timeStamp']
-        result = process_image(image, houseId)
-        emit('frame_processed', {'result': result, 'timeStamp': timeStamp})
-        print("has send back")
-
-    except Exception as e:
-        emit('error', {'error': str(e)})
 def get_person(faces, people):
     found_face = dict()
     for face in faces:
@@ -184,6 +169,37 @@ def process_image(image, houseId):
     except Exception as e:
         print(f"error: {e}")
     return detection_results 
+
+def handle_frame_in_background(image, houseId, timeStamp):
+    try:
+        # Process the image
+        result = process_image(image, houseId)
+
+        # Emit the result directly from this process
+        socketio.emit('frame_processed', {'result': result, 'timeStamp': timeStamp})
+        print("Result sent back")
+
+    except Exception as e:
+        socketio.emit('error', {'error': str(e)})
+
+# Handle incoming frames from the client
+@socketio.on('send_frame', namespace="/detect")
+def handle_frame(data):
+    try:
+        # Decode the received image from bytes
+        image_bytes = np.frombuffer(data['frame'], dtype=np.uint8)
+        image = cv2.imdecode(image_bytes, cv2.IMREAD_COLOR)
+
+        houseId = data['houseId']
+        timeStamp = data['timeStamp']
+
+        # Start a new process to handle the frame
+        process = mp.Process(target=handle_frame_in_background, args=(image, houseId, timeStamp))
+        process.start()
+
+    except Exception as e:
+        emit('error', {'error': str(e)})
+
 
 
 if __name__ == '__main__':
