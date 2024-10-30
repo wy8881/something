@@ -64,6 +64,7 @@ def handle_frame(data):
         timeStamp = data['timeStamp']
         result = process_image(image, houseId)
         emit('frame_processed', {'result': result, 'timeStamp': timeStamp})
+        print("has send back")
 
     except Exception as e:
         emit('error', {'error': str(e)})
@@ -134,7 +135,9 @@ def process_image(image, houseId):
                 keypoints = keypoint.xy.cpu().numpy()[0]
                 index = None
                 for i in ACTIVE_KEYPOINT:
-                        x_kp, y_kp = keypoints[i] 
+                        x_kp, y_kp = keypoints[i]
+                        print(x_kp,y_kp)
+                        print(detected_object)
                         for i, obj in enumerate(detected_object):
                             ox1, oy1, ox2, oy2, obj_conf, obj_class = obj 
                             
@@ -163,8 +166,8 @@ def process_image(image, houseId):
                 identity = identity
             else:
                 identity = None
-            
-            detection = [float(x),float(y),float(w),float(h), float(identity)]
+            identity = float(identity) if identity is not None else identity
+            detection = [float(x),float(y),float(w),float(h), identity]
             face_detections.append(detection)
         found_face = get_person(face_detections, person_detection)
         for idx, identity in found_face.items():
