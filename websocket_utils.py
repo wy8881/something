@@ -3,7 +3,7 @@ import cv2
 import requests
 import queue
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 import socketio.exceptions
 import socketio
 from sort import *
@@ -277,7 +277,7 @@ class House:
                 'identity': identity,
                 'class': object_record.get_class(),
                 'state': "on" if new_state else "off",
-                'timeStamp': str(datetime.fromtimestamp(float(self.timestamp)).strftime("%Y-%m-%d %H:%M:%S"))
+                'timeStamp': str(datetime.fromtimestamp(self.timestamp).strftime("%Y-%m-%d %H:%M:%S"))
             }
             topic = f"houses/{self.house_id}"
             message_json = json.dumps(message_dict)
