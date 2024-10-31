@@ -136,11 +136,6 @@ def on_publish_failure(topic, message):
     # internal_queue.put((PUBLISH_FAILURE, topic, message))
     print(PUBLISH_FAILURE, topic, message)
 
-def publish(self,topic, message):
-
-
-    
-    print(topic, message)
 mqtt_connection = mqtt_connection_builder.mtls_from_path(
     endpoint=cmdData.input_endpoint,
     port=cmdData.input_port,
@@ -158,6 +153,17 @@ mqtt_connection = mqtt_connection_builder.mtls_from_path(
     on_connection_closed=on_connection_closed)
 
 
+def publish(self,topic, message):
+
+    mqtt_connection.publish(
+                    topic=topic,
+                    payload=message,
+                    qos=QOS
+                    )
+    
+    print(topic, message)
+
+
 connect_future = mqtt_connection.connect()
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -166,7 +172,7 @@ model_pose = YOLO("yolo11n-pose.pt")
 model_detect = YOLO("yolo11n.pt")
 DETECTED_LIST = ['laptop']
 ACTIVE_KEYPOINT = [7,8,9,10,11,12]
-FACE_THRESHOD = 90
+FACE_THRESHOD = 100
 CLASSIFIER_FOLDER = "classifier"
 if not os.path.exists(CLASSIFIER_FOLDER):
     os.makedirs(CLASSIFIER_FOLDER)
@@ -300,6 +306,7 @@ def process_image(image, houseId):
             detection = [float(x),float(y),float(w),float(h), identity]
             face_detections.append(detection)
         found_face = get_person(face_detections, person_detection)
+        print(f"Detect face! :{found_face}")
         for idx, identity in found_face.items():
             person_detection[idx][6] = identity
 
