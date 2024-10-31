@@ -252,7 +252,7 @@ class House:
         current_state = object_record.get_state()
         using_people = object_record.isUsing()
         new_state = current_state
-        print(object_id, using_people,  self.touched_queue)
+        print(object_id, using_people,  object_record.touched_queue)
         if current_state:
             if using_people is None:
                 new_state = False
