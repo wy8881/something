@@ -319,7 +319,7 @@ def process_queue():
     while True:
         try:
             # Get an item from the queue
-            data = task_queue.get(timeout=0.1)
+            data = task_queue.get()
 
             houseId = data['houseId']
             timeStamp = data['timeStamp']
@@ -361,13 +361,44 @@ def start_background_queue_processor():
     thread.start()
 
 # API endpoint to submit a new image processing task
-@app.route('/submit', methods=['POST'])
-def submit_task():
-    houseId = request.form.get('houseId')
-    timeStamp = request.form.get('timeStamp')
-    frame = request.files.get('frame')
+# @app.route('/submit', methods=['POST'])
+# def submit_task():
+#     houseId = request.form.get('houseId')
+#     timeStamp = request.form.get('timeStamp')
+#     frame = request.files.get('frame')
 
-    if houseId and frame  and timeStamp:
+#     if houseId and frame  and timeStamp:
+#         try:
+#             # Ensure the 'photo' directory exists
+#             photo_dir = 'photo'
+#             if not os.path.exists(photo_dir):
+#                 os.makedirs(photo_dir)
+
+#             # Generate the filename and save the image to the 'photo' directory
+#             formatted_timeStamp = str(timeStamp).replace('.', '_')
+#             filename = f'frame_{houseId}_{formatted_timeStamp}.jpg'
+#             file_path = os.path.join(photo_dir, filename)
+#             frame.save(file_path)  # Save the binary image to the file system
+
+#             # Add the task to the queue for background processing
+#             task_queue.put({
+#                 'houseId': houseId,
+#                 'timeStamp': timeStamp,
+#                 'file_path': file_path  # Pass the path to the saved image
+#             })
+
+#             # Return an immediate response to the client
+#             return jsonify({"status": "Task received and is being processed", "file_saved": filename}), 202
+#         except Exception as e:
+#                 return jsonify({'error': str(e)}), 500
+
+@socketio.on('submit_task', namespace="/submit")
+def submit_task(data):
+    houseId = data.get('houseId')
+    timeStamp = data.get('timeStamp')
+    frame = data.get('frame')  # Assuming frame is sent as binary data in base64
+
+    if houseId and frame and timeStamp:
         try:
             # Ensure the 'photo' directory exists
             photo_dir = 'photo'
@@ -378,7 +409,10 @@ def submit_task():
             formatted_timeStamp = str(timeStamp).replace('.', '_')
             filename = f'frame_{houseId}_{formatted_timeStamp}.jpg'
             file_path = os.path.join(photo_dir, filename)
-            frame.save(file_path)  # Save the binary image to the file system
+
+            # Decode the image if it's sent as base64, then save it
+            with open(file_path, "wb") as f:
+                f.write(frame)  # frame is expected to be binary data
 
             # Add the task to the queue for background processing
             task_queue.put({
@@ -387,10 +421,10 @@ def submit_task():
                 'file_path': file_path  # Pass the path to the saved image
             })
 
-            # Return an immediate response to the client
-            return jsonify({"status": "Task received and is being processed", "file_saved": filename}), 202
+            # Send an acknowledgment back to the client
+            emit("task_status", {"status": "Task received and is being processed", "file_saved": filename})
         except Exception as e:
-                return jsonify({'error': str(e)}), 500
+            emit("task_status", {"error": str(e)})
 
 
 if __name__ == '__main__':
