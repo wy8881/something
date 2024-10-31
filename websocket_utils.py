@@ -1,5 +1,6 @@
 import json
 import cv2
+import pytz
 import requests
 import queue
 import time
@@ -243,6 +244,9 @@ class House:
             for object_id in tracked_ids_dict['object']:
                 if object_id is not None:
                     self.generate_and_publish_message(object_id,mqtt_connection)
+        
+        adelaide_time = datetime.fromtimestamp(self.timestamp, pytz.timezone("Australia/Adelaide"))
+        print(str(adelaide_time.strftime("%Y-%m-%d %H:%M:%S")))
 
     def generate_and_publish_message(self, object_id,mqtt_connection):
         """Generate and publish JSON message for tracked object state changes."""
@@ -271,13 +275,13 @@ class House:
             else:
                 object_record.update_user(None)
             
-            
+            adelaide_time = datetime.fromtimestamp(self.timestamp, pytz.timezone("Australia/Adelaide"))
             # Create the message dictionary
             message_dict = {
                 'identity': identity,
                 'class': object_record.get_class(),
                 'state': "on" if new_state else "off",
-                'timeStamp': str(datetime.fromtimestamp(self.timestamp).strftime("%Y-%m-%d %H:%M:%S"))
+                'timeStamp': str(adelaide_time.strftime("%Y-%m-%d %H:%M:%S"))
             }
             topic = f"houses/{self.house_id}"
             message_json = json.dumps(message_dict)
