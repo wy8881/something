@@ -250,7 +250,7 @@ def process_image(image, houseId):
             class_id = int(box.cls[0])
             conf = box.conf[0].item()  
             class_label = model_detect.names[class_id]
-            if class_label in DETECTED_LIST and conf > 0.7:
+            if class_label in DETECTED_LIST and conf > 0.6:
                 x1, y1, x2, y2 = box.xyxy[0]
                 detected_object.append([x1.item(), y1.item(), x2.item(), y2.item(), conf, class_label])
                 cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (255, 255, 255),1) 
