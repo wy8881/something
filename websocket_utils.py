@@ -244,9 +244,7 @@ class House:
             for object_id in tracked_ids_dict['object']:
                 if object_id is not None:
                     self.generate_and_publish_message(object_id,mqtt_connection)
-        
-        adelaide_time = datetime.fromtimestamp(self.timestamp, pytz.timezone("Australia/Adelaide"))
-        print(str(adelaide_time.strftime("%Y-%m-%d %H:%M:%S")))
+    
 
     def generate_and_publish_message(self, object_id,mqtt_connection):
         """Generate and publish JSON message for tracked object state changes."""
@@ -254,7 +252,7 @@ class House:
         current_state = object_record.get_state()
         using_people = object_record.isUsing()
         new_state = current_state
-
+        print(object_id, using_people,  self.touched_queue)
         if current_state:
             if using_people is None:
                 new_state = False
@@ -329,10 +327,10 @@ class House:
             if track_id in using_dict.keys():
                 user_id = using_dict[track_id]
                 object_record.add_touched_list(user_id)
-                print(using_dict, object_record.touched_queue)
+                # print(using_dict, object_record.touched_queue)
             else:
                 object_record.add_touched_list(None)
-                print(using_dict, object_record.touched_queue)
+                # print(using_dict, object_record.touched_queue)
 
     def get_tracker(self, class_name):
         """Get the tracker for a specific class name."""
