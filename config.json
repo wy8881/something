@@ -1,0 +1,9 @@
+{
+    "ca_file": "certs/AmazonRootCA1.pem",
+    "cert": "certs/certificate.pem.crt",
+    "key": "certs/private.pem.key",
+    "_endpoint": "asygoxhtusuv0-ats.iot.ap-southeast-2.amazonaws.com",
+    "endpoint": "a2becwqdx5742d-ats.iot.us-east-1.amazonaws.com",
+    "uid":1234
+
+}
