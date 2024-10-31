@@ -397,6 +397,7 @@ def submit_task(data):
     houseId = data.get('houseId')
     timeStamp = data.get('timeStamp')
     frame = data.get('frame')  # Assuming frame is sent as binary data in base64
+    print("receive photos")
 
     if houseId and frame and timeStamp:
         try:
