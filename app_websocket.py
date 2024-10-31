@@ -326,7 +326,6 @@ def process_queue():
             file_path = data['file_path']
             with open(file_path, 'rb') as f:
                 image_data = f.read()  # Simulate processing the image
-                print(f"Processing image for house {houseId}")
             np_arr = np.frombuffer(image_data, np.uint8)
             img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
 
@@ -397,7 +396,6 @@ def submit_task(data):
     houseId = data.get('houseId')
     timeStamp = data.get('timeStamp')
     frame = data.get('frame')  # Assuming frame is sent as binary data in base64
-    print("receive photos")
 
     if houseId and frame and timeStamp:
         try:

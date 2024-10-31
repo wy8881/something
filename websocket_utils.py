@@ -241,7 +241,8 @@ class House:
         # Generate and publish JSON messages for each object
         if "object" in detections.keys():
             for object_id in tracked_ids_dict['object']:
-                self.generate_and_publish_message(object_id,mqtt_connection)
+                if object_id is not None:
+                    self.generate_and_publish_message(object_id,mqtt_connection)
 
     def generate_and_publish_message(self, object_id,mqtt_connection):
         """Generate and publish JSON message for tracked object state changes."""
