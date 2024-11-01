@@ -281,7 +281,7 @@ class House:
                 'state': "on" if new_state else "off",
                 'timeStamp': str(adelaide_time.strftime("%Y-%m-%d %H:%M:%S"))
             }
-            topic = f"houses/{self.house_id}"
+            topic = f"house/{self.house_id}"
             message_json = json.dumps(message_dict)
             mqtt_connection.publish(
             topic=topic,
