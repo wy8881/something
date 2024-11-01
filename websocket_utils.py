@@ -279,7 +279,7 @@ class House:
                 'identity': identity,
                 'class': object_record.get_class(),
                 'state': "on" if new_state else "off",
-                'timeStamp': str(adelaide_time.strftime("%Y-%m-%d %H:%M:%S"))
+                'timestamp': str(adelaide_time.strftime("%Y-%m-%d %H:%M:%S"))
             }
             topic = f"house/{self.house_id}"
             message_json = json.dumps(message_dict)
